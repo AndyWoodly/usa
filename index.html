@@ -1,0 +1,94 @@
+<html>
+<head>
+    <style type="text/css">
+        #overlay {
+            position: absolute;
+            display: none;
+            z-index: 666;
+            padding: 3px;
+            background: white;
+
+            border: 1px solid gray;
+            border-radius: 5px;
+
+        }
+        #textinput {
+            height: 30px;
+            font-family: sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="overlay">
+    <input id="stateinput" autofocus="true" class="textinput" type="text" size="15"/>
+</div>
+
+<object data="usa.svg" type="image/svg+xml" id="mapsvg" width="90%" height="90%"></object>
+
+<script type="text/javascript">
+    var svg = document.getElementById("mapsvg");
+
+    var overlay = document.getElementById("overlay");
+
+    var selectedEl = undefined;
+    var results = {};
+
+    function setState(text) {
+        if (selectedEl) {
+            results[selectedEl.id] = text;
+        }
+    }
+
+    function getState() {
+        if (results[selectedEl.id]) {
+            return results[selectedEl.id];
+        }
+        return "";
+    }
+
+    var stateinput = document.getElementById("stateinput");
+    stateinput.addEventListener('keypress', function (e) {
+        var key = e.which || e.keyCode;
+        if (key == 13) { // 13 is enter
+            console.log("enter");
+            overlay.style.display="none";
+        } else {
+            console.log(key);
+        }
+        setState(stateinput.value);
+    });
+
+
+
+    function eventHandler(evt) {
+        console.log("clicked", evt);
+        selectedEl = evt.toElement;
+        if (selectedEl.classList.contains("selectedstate")) {
+            selectedEl.classList.remove("selectedstate");
+            overlay.style.display="none";
+        } else {
+            selectedEl.classList.add("selectedstate");
+            overlay.style.display="inline";
+            stateinput.value = getState();
+        }
+        overlay.style.left=evt.layerX;
+        overlay.style.top=evt.layerY;
+        console.log(selectedEl.className);
+    }
+
+    svg.addEventListener("load", function() {
+        var svgDoc = svg.contentDocument;
+        var stateEls = svgDoc.getElementsByClassName("state");
+
+        for (var i = 0, length = stateEls.length; i < length; i++) {
+            var state = stateEls[i].id;
+            stateEls[i].addEventListener("click", eventHandler, false);
+        }
+    }, false);
+</script>
+
+</body>
+
+</html>
