@@ -10,13 +10,13 @@
             stroke-width:1;
             stroke-opacity:1;
         }
+
         .setstate
         {
             fill: darkgray;
-        }
-        .selectedstate
-        {
-            fill: lightblue;
+            stroke:#646464;
+            stroke-width:1;
+            stroke-opacity:1;
         }
 
 

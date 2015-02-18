@@ -16,6 +16,11 @@
             height: 30px;
             font-family: sans-serif;
         }
+        .control {
+            margin-left: auto;
+            margin-right: auto;
+            width: 50px;
+        }
     </style>
 </head>
 
@@ -26,6 +31,7 @@
 </div>
 
 <object data="usa.svg" type="image/svg+xml" id="mapsvg" width="90%" height="90%"></object>
+<div class="control"><button id="check">Check</button></div>
 
 <script type="text/javascript">
     var svg = document.getElementById("mapsvg");
@@ -51,28 +57,40 @@
     var stateinput = document.getElementById("stateinput");
     stateinput.addEventListener('keypress', function (e) {
         var key = e.which || e.keyCode;
-        if (key == 13) { // 13 is enter
-            console.log("enter");
+        if (key == 13) { // enter
             overlay.style.display="none";
-        } else {
-            console.log(key);
+            if (!stateinput.value && stateinput.value == "") {
+                selectedEl.classList.remove("setstate");
+            } else {
+                selectedEl.classList.add("setstate");
+            }
+            selectedEl.classList.remove("selectedstate");
         }
         setState(stateinput.value);
     });
 
-
+    function toggleClass(el, clazz) {
+        if (el.classList.contains(clazz)) {
+            el.classList.remove(clazz);
+        } else {
+            el.classList.add(clazz);
+        }
+    }
 
     function eventHandler(evt) {
         console.log("clicked", evt);
-        selectedEl = evt.toElement;
-        if (selectedEl.classList.contains("selectedstate")) {
+        if (selectedEl) {
             selectedEl.classList.remove("selectedstate");
-            overlay.style.display="none";
-        } else {
-            selectedEl.classList.add("selectedstate");
-            overlay.style.display="inline";
-            stateinput.value = getState();
         }
+
+        selectedEl = evt.toElement;
+        toggleClass(selectedEl, "selectedstate");
+        overlay.style.display="inline";
+
+        stateinput.value = getState();
+        stateinput.focus();
+        stateinput.select();
+
         overlay.style.left=evt.layerX;
         overlay.style.top=evt.layerY;
         console.log(selectedEl.className);
