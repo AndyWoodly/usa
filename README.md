@@ -1,2 +1,2 @@
-# usa
-USA states quiz
+# USA
+The Unknown States of America
