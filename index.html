@@ -1,0 +1,174 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+    <style type="text/css">
+        #overlay {
+            position: absolute;
+            display: none;
+            z-index: 666;
+            padding: 3px;
+            background: white;
+
+            border: 1px solid gray;
+            border-radius: 5px;
+
+        }
+        #textinput {
+            height: 30px;
+            font-family: sans-serif;
+        }
+        .control {
+            margin-left: auto;
+            margin-right: auto;
+            width: 50px;
+        }
+        .map-container {
+            padding: 1em;
+        }
+
+    </style>
+    <script src="states.js"></script>
+</head>
+
+<body>
+
+<div id="overlay">
+    <input id="stateinput" autofocus="true" class="textinput" type="text" size="15"/>
+</div>
+
+<div class="row">
+    <div class="col-md-9 col-md-offset-1 text-center">
+        <div class="map-title">
+            <h1>USA - Unknown States of America</h1>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9 col-md-offset-1 text-center">
+        <object data="usa.svg" type="image/svg+xml" id="mapsvg"></object>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-9 col-md-offset-1 text-center">
+        <div class="control"><button id="checkBtn" class="btn btn-primary">Check</button></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var svg = document.getElementById("mapsvg");
+
+    var overlay = document.getElementById("overlay");
+
+    var checkBtn = document.getElementById("checkBtn");
+
+    function test() {
+        var matches = 0;
+        for (var s in results) {
+            var correct = states[s];
+            var resEl = results[s];
+            if (resEl.name == correct) {
+                setClass(resEl.el, "correct");
+                unsetClass(resEl.el, "wrong");
+                matches++;
+            } else {
+                setClass(resEl.el, "wrong");
+                unsetClass(resEl.el, "correct");
+            }
+        }
+        if (matches == Object.keys(states).length) {
+            alert("Congratulation!");
+        }
+    }
+    checkBtn.addEventListener('click', test);
+
+    var selectedEl = undefined;
+    var results = {};
+
+    function setState(text) {
+        if (selectedEl) {
+            results[selectedEl.id] = {
+                name: text,
+                el: selectedEl
+            };
+        }
+    }
+
+    function getState() {
+        if (results[selectedEl.id]) {
+            return results[selectedEl.id].name;
+        }
+        return "";
+    }
+
+    var stateinput = document.getElementById("stateinput");
+    stateinput.addEventListener('keypress', function (e) {
+        var key = e.which || e.keyCode;
+        if (key == 13) { // enter
+            overlay.style.display="none";
+            if (!stateinput.value && stateinput.value == "") {
+                selectedEl.classList.remove("setstate");
+            } else {
+                selectedEl.classList.add("setstate");
+            }
+            unsetClass(selectedEl, "selectedstate");
+            unsetClass(selectedEl, "wrong");
+            unsetClass(selectedEl, "correct");
+        }
+        setState(stateinput.value);
+    });
+
+    function toggleClass(el, clazz) {
+        if (el.classList.contains(clazz)) {
+            unsetClass(el, clazz);
+        } else {
+            setClass(el, clazz);
+        }
+    }
+
+    function setClass(el, clazz) {
+        if (!el.classList.contains(clazz)) {
+            el.classList.add(clazz);
+        }
+    }
+
+    function unsetClass(el, clazz) {
+        if (el.classList.contains(clazz)) {
+            el.classList.remove(clazz);
+        }
+    }
+
+    function eventHandler(evt) {
+        console.log("clicked", evt);
+        if (selectedEl) {
+            selectedEl.classList.remove("selectedstate");
+        }
+
+        selectedEl = evt.toElement;
+        toggleClass(selectedEl, "selectedstate");
+        overlay.style.display="inline";
+
+        stateinput.value = getState();
+        stateinput.focus();
+        stateinput.select();
+
+        var offset = svg.parentElement.offsetLeft;
+        overlay.style.left=evt.x+offset;
+        overlay.style.top=evt.y;
+        console.log(selectedEl.className);
+    }
+
+    svg.addEventListener("load", function() {
+        var svgDoc = svg.contentDocument;
+        var stateEls = svgDoc.getElementsByClassName("state");
+
+        for (var i = 0, length = stateEls.length; i < length; i++) {
+            var state = stateEls[i].id;
+            stateEls[i].addEventListener("click", eventHandler, false);
+        }
+    }, false);
+</script>
+
+</body>
+
+</html>
