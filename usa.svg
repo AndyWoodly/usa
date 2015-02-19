@@ -19,6 +19,22 @@
             stroke-opacity:1;
         }
 
+        .correct
+        {
+            fill: green;
+            stroke:#646464;
+            stroke-width:1;
+            stroke-opacity:1;
+        }
+
+        .wrong
+        {
+            fill: red;
+            stroke:#646464;
+            stroke-width:1;
+            stroke-opacity:1;
+        }
+
 
         .selectedstate
         {
