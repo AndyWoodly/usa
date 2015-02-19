@@ -152,9 +152,10 @@
         stateinput.focus();
         stateinput.select();
 
-        var offset = svg.parentElement.offsetLeft;
-        overlay.style.left=evt.x+offset;
-        overlay.style.top=evt.y;
+        var offsetX = svg.parentElement.offsetLeft;
+        var offsetY = svg.parentElement.offsetTop;
+        overlay.style.left=evt.x + offsetX;
+        overlay.style.top=evt.y + offsetY;
         console.log(selectedEl.className);
     }
 
